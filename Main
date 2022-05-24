@@ -1,0 +1,204 @@
+import java.util.Random;
+import java.util.Scanner;
+import java.util.Vector;
+
+public class Main {
+	Scanner scan = new Scanner(System.in);
+	Vector <Book> bookVec = new Vector<>();
+	
+	void enter() {
+		System.out.println("Press Enter to Proceed!");
+		scan.nextLine();
+	}
+	
+	void cls() {
+		for (int i = 0; i < 40; i++) {
+			System.out.println();
+		}
+	}
+	
+	void menu() {
+		System.out.println("Welcome to JuGlib");
+		System.out.println("1. View Book");
+		System.out.println("2. Add Book");
+		System.out.println("3. Update Book");
+		System.out.println("4. Exit");
+		System.out.print("Choose [1 - 4] >> ");
+	}
+	
+	void viewBook() {
+		if (bookVec.isEmpty()) {
+			System.out.println("There is no book.");
+		}else {
+			System.out.println("List of Book : ");
+			System.out.println("=========================================================================================================");
+			System.out.printf("|| %-12s || %-8s || %-14s || %-10s || %-20s || %-15s ||\n", "Library Name",
+				"Book Id", "Book Name", "Book Price", "Book Description", "Library Country");
+			System.out.println("=========================================================================================================");
+			for (int i = 0; i < bookVec.size(); i++) {
+				Book book = bookVec.get(i);
+				System.out.printf("|| %-12s || %-8s || %-14s || %-10s || %-20s || %-15s ||\n", book.getLibName(), 
+						book.getBookID(), book.getBookName(), book.getBookPrice(), book.getBookDesc(), 
+						book.getLibCountry());	
+			}
+			System.out.println("=========================================================================================================");
+		}
+	}
+	
+	void addBook() {
+		String bookName;
+		int bookPrice;
+		String bookDesc;
+		String libName;
+		String libCountry = null;
+		String bookID;
+		
+		do {
+			System.out.print("Input book name >> ");
+			bookName = scan.nextLine();
+		} while (bookName.isEmpty());
+		
+		do {
+			System.out.print("Input book price [ more than 20000 ] >> ");
+			try {
+				bookPrice = scan.nextInt();
+			} catch (Exception e) {
+				bookPrice = 0;
+				System.out.println("Book price must be more than 20000!");
+			}
+			scan.nextLine();
+		} while (bookPrice <= 20000);
+		
+		do {
+			System.out.print("Input book description [ 5...20 ] >> ");
+				bookDesc = scan.nextLine();
+				if (bookDesc.length() < 5 || bookDesc.length() > 20) {
+					System.out.println("Description should be between 5 and 20 characters!");
+				}
+		} while (bookDesc.length() < 5 || bookDesc.length() > 20);
+		
+		do {
+			System.out.print("Input library name [ EchLib | JustGoLib | XLib ] >> ");
+			libName = scan.nextLine();
+		} while (!libName.equals("EchLib") & !libName.equals("JustGoLib") & !libName.equals("XLib"));
+		
+		if (libName.equals("EchLib")) {
+			libCountry = "Singapore";
+		}else if (libName.equals("JustGoLib")) {
+			libCountry = "Indonesia";
+		}else if (libName.equals("XLib")) {
+			libCountry = "Malaysia";
+		}
+		
+		Random rand = new Random();
+		bookID = "BOOK" + rand.nextInt(10) + rand.nextInt(10) + rand.nextInt(10) + rand.nextInt(10);
+		
+		bookVec.add(new Book(bookName, bookPrice, bookDesc, libName, libCountry, bookID));
+		
+		System.out.println("Successfully added new book!");	
+	}
+	
+	void updateBook() {
+		if (bookVec.isEmpty()) {
+			System.out.println("There is no book!");
+		}else {
+			String updID;
+			int option;
+			String newBookName;
+			int newBookPrice;
+			String newBookDesc;
+			int flag = 0;
+			System.out.println();
+			viewBook();
+			
+			System.out.print("Input Book Id [ e. g. BOOK1234 ] >> ");
+			updID = scan.nextLine();
+			
+			for (int i = 0; i < bookVec.size(); i++) {
+				if (bookVec.get(i).getBookID().equals(updID)) {
+					flag = 1;
+					do {
+						System.out.println("Update : ");
+						System.out.println("1. Update book name");
+						System.out.println("2. Update book price");
+						System.out.println("3. Update book description");
+						System.out.print("Choose [ 1 - 3 ] >> ");
+						try {
+							option = scan.nextInt();
+						} catch (Exception e) {
+							option = 0;
+						}
+						scan.nextLine();
+						
+						switch (option) {
+						case 1:
+							do {
+								System.out.print("Input book name >>");
+								newBookName = scan.nextLine();	
+								bookVec.get(i).setBookName(newBookName);
+								System.out.println("Succesfully changed book name!");
+							} while (newBookName.isEmpty());
+							break;
+						case 2:
+							do {
+								System.out.print("Input book price [ more than 20000 ] >>");
+								try {
+									newBookPrice = scan.nextInt();
+								} catch (Exception e) {
+									newBookPrice = 0;
+								}
+								scan.nextLine();	
+								bookVec.get(i).setBookPrice(newBookPrice);
+								System.out.println("Succesfully changed book price!");
+							} while (newBookPrice <= 20000);
+							break;
+						case 3:
+							do {
+								System.out.print("Input book description [5..20] >>");
+								newBookDesc = scan.nextLine();	
+								bookVec.get(i).setBookDesc(newBookDesc);
+								System.out.println("Succesfully changed book description!");
+							} while (newBookDesc.length() < 5 || newBookDesc.length() > 20);
+							break;
+						}
+						enter();
+					}while(option != 4);
+				}
+			}if(flag == 0){
+				System.out.println("Book ID not found!");
+			}
+		}
+	}
+	
+	public Main() {
+		int option;
+		do {
+			cls();
+			menu();
+			try {
+				option = scan.nextInt();
+			} catch (Exception e) {
+				option = 0;
+			}
+			scan.nextLine();
+			switch (option) {
+			case 1:
+				viewBook();
+				enter();
+				break;
+			case 2:
+				addBook();	
+				enter();
+				break;
+			case 3:
+				updateBook();
+				break;
+			}
+		} while (option != 4 || option == 0);
+	}
+
+	public static void main(String[] args) {
+		new Main();
+	}
+
+}
